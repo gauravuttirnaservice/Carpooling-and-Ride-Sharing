@@ -1,9 +1,15 @@
-import formsPlugin from '@tailwindcss/forms';
+import formsPlugin from "@tailwindcss/forms";
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "!./src/**/node_modules/**",
+  ],
+
   darkMode: "class",
+
   theme: {
     extend: {
       colors: {
@@ -19,10 +25,12 @@ export default {
         "text-secondary": "#475569",
         "text-muted": "#64748b",
       },
+
       fontFamily: {
         display: ["Spline Sans", "sans-serif"],
         body: ["Noto Sans", "sans-serif"],
       },
+
       borderRadius: {
         DEFAULT: "1rem",
         lg: "2rem",
@@ -31,5 +39,6 @@ export default {
       },
     },
   },
+
   plugins: [formsPlugin],
 };

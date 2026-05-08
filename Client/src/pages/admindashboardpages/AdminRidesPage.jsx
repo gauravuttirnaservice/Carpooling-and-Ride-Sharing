@@ -39,7 +39,8 @@ const AdminRidesPage = () => {
     const { search } = useAdmin();
     const [rides, setRides] = useState([]);
     const [page, setPage] = useState(1);
-    const { fetchRides, filter, setFilter, loading } = useAdminData();
+    const [filter, setFilter] = useState("all");
+    const { fetchRides, loading } = useAdminData();
 
     const [totalPages, setTotalPages] = useState(1);
     const [totalRides, setTotalRides] = useState(0);

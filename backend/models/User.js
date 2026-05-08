@@ -54,6 +54,10 @@ const User = sequelize.define('User', {
     aadharVerified: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+    },
+    driverVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
     }
 }, {
     timestamps: true,

@@ -208,7 +208,7 @@ export const getAllRideswithDriver = async (req, res) => {
 
         const { count, rows: rides } = await Ride.findAndCountAll({
             where: whereClause,
-            include: [{ model: User, as: "driver", attributes: ["firstName", "lastName", "email", "profilePicture"] }],
+            include: [{ model: User, as: "driver", attributes: ["firstName", "lastName", "email", "profilePicture", "driverVerified"] }],
             order: [["createdAt", "DESC"]],
             limit,
             offset
@@ -236,7 +236,7 @@ export const getRidesDetails = async (req, res) => {
     try {
         const { id } = req.params;
         const ride = await Ride.findByPk(id, {
-            include: [{ model: User, as: "driver", attributes: ["firstName", "lastName", "email", "profilePicture"] }]
+            include: [{ model: User, as: "driver", attributes: ["firstName", "lastName", "email", "profilePicture", "driverVerified"] }]
         });
 
         if (!ride) return res.status(404).json({ message: "Ride not found" });
@@ -261,6 +261,9 @@ export const verifyDriver = async (req, res) => {
 
     ride.driverVerified = true;
     await ride.save();
+
+    // Also verify the driver globally on the User model
+    await User.update({ driverVerified: true }, { where: { id: ride.driverId } });
 
     res.json({ message: "Driver verified successfully" });
 };

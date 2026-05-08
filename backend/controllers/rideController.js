@@ -63,6 +63,9 @@ export const offerRide = async (req, res) => {
             console.error('Error fetching coordinates from Nominatim:', fetchError);
         }
 
+        // Check if driver is already verified
+        const user = await User.findByPk(req.user.id);
+
         // Create the ride
         const ride = await Ride.create({
             driverId: req.user.id,
@@ -73,6 +76,7 @@ export const offerRide = async (req, res) => {
             availableSeats: seats,
             pricePerSeat: price,
             status: 'scheduled',
+            driverVerified: user.driverVerified || false,
             aadharCard,
             drivingLicense: drivingLicensePath,
             carNumber,

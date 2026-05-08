@@ -126,7 +126,7 @@ const AdminRideDetailPage = () => {
     if (!originalRide) return <EmptyState icon={Car} title="Ride not found" />;
 
     const isCancelled = cancelled || originalRide.status === "cancelled";
-    const isDriverVerified = driverVerified !== null ? driverVerified : originalRide.driverVerified;
+    const isDriverVerified = driverVerified !== null ? driverVerified : (originalRide.driverVerified || (originalRide.driver && originalRide.driver.driverVerified));
 
     const handleVerifyStatusChange = async () => {
         setActionLoading(true);

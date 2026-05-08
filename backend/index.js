@@ -40,6 +40,10 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 
+app.get("/", (req, res) => {
+    res.send("API Running");
+});
+
 const PORT = process.env.PORT || 3000;
 
 // Sync DB and Start Server

@@ -12,15 +12,35 @@ dotenv.config();
 
 const app = express();
 
+// const corsOptions = {
+//     origin: process.env.VITE_FRONTEND_URL,
+//     credentials: true,
+// };
+// app.use(cors(corsOptions));
+// app.use(express.json());
+const allowedOrigins = [
+    process.env.VITE_FRONTEND_URL, // vercel url
+    "http://localhost:5173",       // vite local
+
+];
+
 const corsOptions = {
-    origin: process.env.VITE_FRONTEND_URL,
+    origin: function (origin, callback) {
+        // allow requests with no origin (postman/mobile apps)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
 };
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Serve static files from the uploads directory
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Static /uploads route removed — images are now served via Cloudinary CDN
 
 import cityRoutes from './routes/cityRoutes.js';
 import authRoutes from './routes/authRoutes.js';

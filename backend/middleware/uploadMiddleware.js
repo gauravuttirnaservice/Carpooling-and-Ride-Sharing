@@ -1,23 +1,13 @@
 import multer from 'multer';
 import path from 'path';
 
-// Set storage engine
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/'); // Make sure this folder exists or gets created
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
-    }
-});
+// Use memoryStorage so files are kept in memory (Buffer) for direct Cloudinary upload
+const storage = multer.memoryStorage();
 
 // Check File Type
 function checkFileType(file, cb) {
-    // Allowed ext
     const filetypes = /jpeg|jpg|png|pdf/;
-    // Check ext
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    // Check mime
     const mimetype = filetypes.test(file.mimetype);
 
     if (mimetype && extname) {
@@ -36,7 +26,7 @@ export const upload = multer({
     }
 });
 
-// Middleware for multiple specific files
+// Middleware for multiple specific files (Aadhar, Driving License)
 export const uploadRideDocuments = upload.fields([
     { name: 'aadharCard', maxCount: 1 },
     { name: 'drivingLicense', maxCount: 1 }

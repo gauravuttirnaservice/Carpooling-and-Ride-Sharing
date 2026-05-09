@@ -1,5 +1,6 @@
 import { Ride, User, Booking, Review } from '../models/index.js';
 import { Op } from 'sequelize';
+import { uploadToCloudinary } from '../utils/coudinary.js';
 
 // @desc    Offer a new ride
 // @route   POST /api/rides/offer
@@ -25,8 +26,16 @@ export const offerRide = async (req, res) => {
             destLng
         } = req.body;
 
-        // Get file paths
-        const drivingLicensePath = req.files?.drivingLicense ? `/uploads/${req.files.drivingLicense[0].filename}` : null;
+        // Upload driving license to Cloudinary if provided
+        let drivingLicensePath = null;
+        if (req.files?.drivingLicense) {
+            const uploadResult = await uploadToCloudinary(
+                req.files.drivingLicense[0].buffer,
+                'ride_documents',
+                'auto'
+            );
+            drivingLicensePath = uploadResult.secure_url;
+        }
 
         // Combine date and time to create departure time
         const departureDateTime = new Date(`${date}T${startTime}`);
@@ -63,10 +72,8 @@ export const offerRide = async (req, res) => {
             console.error('Error fetching coordinates from Nominatim:', fetchError);
         }
 
-        // Check if driver is already verified
-        const user = await User.findByPk(req.user.id);
-
-        // Create the ride
+        // Create the ride — driverVerified is NOT stored on the ride,
+        // verification is checked via User.driverVerified at search time.
         const ride = await Ride.create({
             driverId: req.user.id,
             origin: leavingFrom,
@@ -76,7 +83,6 @@ export const offerRide = async (req, res) => {
             availableSeats: seats,
             pricePerSeat: price,
             status: 'scheduled',
-            driverVerified: user.driverVerified || false,
             aadharCard,
             drivingLicense: drivingLicensePath,
             carNumber,
@@ -129,10 +135,10 @@ export const getActiveRides = async (req, res) => {
         const offset = (pageNum - 1) * limitNum;
 
         // Build the where clause
-        // Only return rides that are scheduled AND where the driver's documents are verified by admin
+        // Only return scheduled rides where the DRIVER is verified (checked via User join, not Ride column)
+        // This means once a driver is verified once, ALL their future rides show up automatically.
         const whereClause = {
             status: 'scheduled',
-            driverVerified: true
         };
 
         if (from) whereClause.origin = { [Op.iLike]: `%${from}%` };
@@ -214,6 +220,8 @@ export const getActiveRides = async (req, res) => {
             include: [{
                 model: User,
                 as: 'driver',
+                // Filter: only include rides whose driver is verified by admin
+                where: { driverVerified: true },
                 attributes: ['id', 'firstName', 'lastName', 'profilePicture']
             }]
         });

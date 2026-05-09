@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User, Ride } from '../models/index.js';
+import { uploadToCloudinary } from '../utils/coudinary.js';
 
 export const register = async (req, res) => {
     try {
@@ -13,7 +14,11 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: 'All fields are required' });
         }
 
-        const profilePicture = req.file ? `/uploads/${req.file.filename}` : null;
+        let profilePicture = null;
+        if (req.file) {
+            const uploadResult = await uploadToCloudinary(req.file.buffer, 'profile_pictures', 'image');
+            profilePicture = uploadResult.secure_url;
+        }
 
         // Check if user exists
         const existingUser = await User.findOne({ where: { email } });
@@ -171,9 +176,10 @@ export const updateProfile = async (req, res) => {
 
         // Handle gender mapping (Removed because User model does not have a gender column)
 
-        // Handle profile picture
+        // Handle profile picture — upload to Cloudinary
         if (req.file) {
-            user.profilePicture = `/uploads/${req.file.filename}`;
+            const uploadResult = await uploadToCloudinary(req.file.buffer, 'profile_pictures', 'image');
+            user.profilePicture = uploadResult.secure_url;
         }
 
         await user.save();

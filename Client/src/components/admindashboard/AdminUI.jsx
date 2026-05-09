@@ -1,5 +1,6 @@
 import React from "react";
 import { X, CheckCircle, Star, AlertTriangle, TrendingUp, ChevronRight } from "lucide-react";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 export const BADGE_MAP = {
     verified: "bg-emerald-100 text-emerald-700 border border-emerald-200",
@@ -116,7 +117,7 @@ export const BackButton = ({ onClick, label = "Back" }) => (
 export const Avatar = ({ name, src, size = "md", gradient = "from-violet-400 to-indigo-500" }) => {
     const sz = { sm: "w-7 h-7 text-[10px]", md: "w-9 h-9 text-sm", lg: "w-12 h-12 text-base", xl: "w-16 h-16 sm:w-20 sm:h-20 text-2xl sm:text-3xl" };
     if (src) {
-        const imgSrc = src.startsWith('http') ? src : `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}${src}`;
+        const imgSrc = getImageUrl(src, name);
         return (
             <div className={`rounded-xl flex-shrink-0 overflow-hidden ${sz[size]}`}>
                 <img src={imgSrc} alt={name} className="w-full h-full object-cover" />

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
 import toast from "react-hot-toast";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const RideCard = ({ ride, onCancel }) => {
   const isCancelled = ride.status === "cancelled" || ride.status === "rejected";
@@ -128,7 +129,7 @@ const RideCard = ({ ride, onCancel }) => {
           <div className="flex gap-3 items-center">
             <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center shrink-0 border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-400 overflow-hidden">
               {ride.driverProfilePicture ? (
-                <img src={`http://localhost:3000${ride.driverProfilePicture}`} alt={ride.driver} className="w-full h-full object-cover" />
+                <img src={getImageUrl(ride.driverProfilePicture, ride.driver)} alt={ride.driver} className="w-full h-full object-cover" />
               ) : (
                 <span className="material-symbols-outlined text-[18px]">person</span>
               )}

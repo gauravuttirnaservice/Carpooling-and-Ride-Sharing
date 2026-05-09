@@ -1,24 +1,21 @@
 /**
- * Returns the correct image URL regardless of whether it is:
- * - An absolute Cloudinary URL  (https://res.cloudinary.com/...)  → returned as-is
- * - A legacy relative path      (/uploads/filename.jpg)           → prefixed with VITE_BACKEND_URL
- * - Null / undefined                                              → returns fallback avatar
+ * Returns the correct image URL for display.
  *
- * @param {string|null} url - The profilePicture value from the API
+ * - Absolute Cloudinary/external URL (starts with http/https) → returned as-is
+ * - Null / undefined / relative legacy path                   → returns fallback avatar
+ *
+ * All images are now stored on Cloudinary. There is no local /uploads/ folder.
+ *
+ * @param {string|null} url  - The profilePicture / image value from the API
  * @param {string} [name="User"] - Name used for the fallback avatar initials
  * @returns {string} A fully-qualified image URL safe to use in <img src>
  */
 export function getImageUrl(url, name = "User") {
-    if (!url) {
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random`;
-    }
-
-    // Already an absolute URL (Cloudinary, S3, etc.) — use directly
-    if (url.startsWith("http://") || url.startsWith("https://")) {
+    // Already an absolute Cloudinary / CDN URL — use directly
+    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
         return url;
     }
 
-    // Legacy relative path from old /uploads/ local storage
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "";
-    return `${backendUrl}${url}`;
+    // No URL (null, undefined, empty, or old legacy relative path) → fallback avatar
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=random&color=fff`;
 }

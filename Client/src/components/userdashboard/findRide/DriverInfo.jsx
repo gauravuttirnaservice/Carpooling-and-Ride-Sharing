@@ -1,13 +1,12 @@
 import React from "react";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const DriverInfo = ({ ride }) => {
   if (!ride) return null;
 
   const driver = ride.driver || {};
   const driverName = `${driver.firstName || "Unknown"} ${driver.lastName || "Driver"}`;
-  const profilePic = driver.profilePicture
-    ? `${import.meta.env.VITE_BACKEND_URL}${driver.profilePicture}`
-    : `https://ui-avatars.com/api/?name=${driver.firstName || "U"}+${driver.lastName || "D"}&background=random`;
+  const profilePic = getImageUrl(driver.profilePicture, `${driver.firstName || "U"} ${driver.lastName || "D"}`);
 
   const rating = driver.rating !== undefined ? driver.rating : "4.9";
   const totalRides = driver.totalRides !== undefined ? driver.totalRides : "120";
@@ -84,11 +83,10 @@ const DriverInfo = ({ ride }) => {
               <div key={review.id} className="bg-slate-50 dark:bg-white/5 p-6 rounded-2xl border border-transparent dark:border-white/5 hover:border-slate-200 transition-colors">
                 <div className="flex items-center gap-4 mb-4">
                   <img
-                    src={
-                      review.reviewer?.profilePicture
-                        ? `${import.meta.env.VITE_BACKEND_URL}${review.reviewer.profilePicture}`
-                        : `https://ui-avatars.com/api/?name=${review.reviewer?.firstName || "U"}+${review.reviewer?.lastName || ""}&background=random`
-                    }
+                    src={getImageUrl(
+                      review.reviewer?.profilePicture,
+                      `${review.reviewer?.firstName || "U"} ${review.reviewer?.lastName || ""}`
+                    )}
                     alt="Reviewer"
                     className="w-10 h-10 rounded-full object-cover"
                   />

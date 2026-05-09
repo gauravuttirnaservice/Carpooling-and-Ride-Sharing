@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const RideCard = ({ ride, onUpdate }) => {
   const isUpcoming = ride.status === "upcoming" || ride.status === "scheduled";
@@ -221,7 +222,7 @@ const RideCard = ({ ride, onUpdate }) => {
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase overflow-hidden">
                     {p.profilePicture ? (
-                      <img src={`http://localhost:3000${p.profilePicture}`} alt={p.name} className="w-full h-full object-cover" />
+                      <img src={getImageUrl(p.profilePicture, p.name)} alt={p.name} className="w-full h-full object-cover" />
                     ) : (
                       p.name.charAt(0)
                     )}

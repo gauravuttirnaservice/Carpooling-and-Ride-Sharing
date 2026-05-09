@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axiosInstance from "../../../utils/axiosInstance";
 import { toast } from "react-hot-toast";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 const ProfileCard = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -32,7 +33,7 @@ const ProfileCard = () => {
         const fullName = `${userObj.firstName || ""} ${userObj.lastName || ""}`.trim() || "User";
 
         setUserId(userObj.id);
-        const fetchedPhoto = userObj.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userObj.profilePicture}` : null;
+        const fetchedPhoto = getImageUrl(userObj.profilePicture, userObj.firstName);
 
         setProfileData({
           name: fullName,
@@ -117,7 +118,7 @@ const ProfileCard = () => {
 
         // Refresh full data from server response
         const userObj = response.data.user;
-        const newPhoto = userObj.profilePicture ? `${import.meta.env.VITE_BACKEND_URL}${userObj.profilePicture}` : null;
+        const newPhoto = getImageUrl(userObj.profilePicture, userObj.firstName);
 
         setProfileData(prev => ({
           ...prev,

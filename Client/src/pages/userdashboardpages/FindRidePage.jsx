@@ -6,6 +6,7 @@ import Sidebar from "../../components/userdashboard/findRide/Sidebar";
 import UserNavbar from "../../components/userdashboard/layout/UserNavbar";
 import axiosInstance from "../../utils/axiosInstance";
 import { useSearchContext } from "../../contexts/SearchContext";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const FindRidePage = () => {
   const [rides, setRides] = useState([]);
@@ -68,10 +69,8 @@ const FindRidePage = () => {
         );
 
         const formattedRides = filteredRidesData.map((ride) => {
-          const baseURL = axiosInstance.defaults.baseURL.replace("/api", "");
-          const avatarUrl = ride.driver?.profilePicture
-            ? `${baseURL}${ride.driver.profilePicture}`
-            : `https://ui-avatars.com/api/?name=${ride.driver?.firstName || "User"}+${ride.driver?.lastName || ""}&background=random`;
+          const driverName = `${ride.driver?.firstName || "User"} ${ride.driver?.lastName || ""}`;
+          const avatarUrl = getImageUrl(ride.driver?.profilePicture, driverName);
 
           return {
             id: ride.id,

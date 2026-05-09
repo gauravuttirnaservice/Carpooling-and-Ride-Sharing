@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAdmin } from "../../components/admindashboard/AdminContext";
 import { useAdminData } from "../../hooks/useAdminData";
 import { BackButton, PageHeader, Card, EmptyState, Avatar, Badge } from "../../components/admindashboard/AdminUI";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 
 const AdminUserProfilePage = () => {
@@ -21,9 +22,7 @@ const AdminUserProfilePage = () => {
         loadUser();
     }, [id, fetchUser]);
 
-    const profilePic = user?.profilePicture
-        ? `${import.meta.env.VITE_BACKEND_URL}${user?.profilePicture}`
-        : "https://via.placeholder.com/150?text=Driver";
+    const profilePic = getImageUrl(user?.profilePicture, `${user?.firstName || ""} ${user?.lastName || ""}`);
 
     const handleVerify = async () => {
         setVerifying(true);

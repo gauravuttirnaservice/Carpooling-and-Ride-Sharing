@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAdmin } from "../../components/admindashboard/AdminContext";
 import { useAdminData } from "../../hooks/useAdminData";
 import { BackButton, PageHeader, Card, EmptyState, Badge, InfoRow, Avatar, ConfirmDialog } from "../../components/admindashboard/AdminUI";
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const RouteInfoCard = ({ ride, isCancelled }) => {
     const depDate = new Date(ride.departureTime);
@@ -25,9 +26,7 @@ const RouteInfoCard = ({ ride, isCancelled }) => {
 
 const DriverCard = ({ ride, isDriverVerified, onVerify, verifying }) => {
     const driverName = ride.driver ? `${ride.driver.firstName || ""} ${ride.driver.lastName || ""}`.trim() : "Unknown";
-    const profilePic = ride.driver?.profilePicture
-        ? `${import.meta.env.VITE_BACKEND_URL}${ride.driver?.profilePicture}`
-        : null;
+    const profilePic = getImageUrl(ride.driver?.profilePicture, driverName);
 
     return (
         <Card className="p-4 sm:p-5">
@@ -48,7 +47,7 @@ const DriverCard = ({ ride, isDriverVerified, onVerify, verifying }) => {
                 <div className="flex items-start sm:items-center gap-3 py-2 border-b border-slate-50 last:border-0">
                     <ShieldCheck size={13} className="text-slate-400 flex-shrink-0 mt-0.5 sm:mt-0" />
                     <span className="text-xs text-slate-500 w-24 flex-shrink-0">Driving License</span>
-                    <a href={`${import.meta.env.VITE_BACKEND_URL}${ride.drivingLicense}`} target="_blank" rel="noreferrer" className="text-sm font-semibold text-violet-600 hover:underline break-all">View Document</a>
+                    <a href={getImageUrl(ride.drivingLicense)} target="_blank" rel="noreferrer" className="text-sm font-semibold text-violet-600 hover:underline break-all">View Document</a>
                 </div>
             )}
             {!isDriverVerified && (
